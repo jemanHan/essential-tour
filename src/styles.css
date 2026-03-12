@@ -1,0 +1,463 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 스크롤바 숨기기 */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}
+
+@layer base {
+  html, body {
+    @apply bg-[#fafaf9] text-[#111827] antialiased;
+    font-family: system-ui, 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Segoe UI', Roboto, sans-serif;
+  }
+  
+  h1 {
+    @apply font-extrabold tracking-tight text-[#111827] text-3xl md:text-4xl lg:text-5xl;
+  }
+  
+  h2 {
+    @apply font-bold tracking-tight text-[#111827] text-2xl md:text-3xl lg:text-4xl;
+  }
+  
+  h3 {
+    @apply text-xl md:text-2xl lg:text-3xl font-extrabold tracking-tight text-gray-900;
+  }
+  
+  p {
+    @apply leading-relaxed;
+  }
+  
+  a {
+    @apply text-brand underline-offset-4 hover:opacity-80;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+  
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar {
+    height: 6px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+  
+  .container-xl {
+    @apply mx-auto max-w-screen-xl px-4 md:px-6;
+  }
+  
+  .section {
+    @apply py-10 md:py-14;
+  }
+  
+  .card {
+    @apply bg-white rounded-2xl shadow-soft border border-gray-100;
+  }
+  
+  .card-pad {
+    @apply p-5 md:p-6;
+  }
+  
+  /* Base button: slimmer, cooler look */
+  .btn {
+    @apply inline-flex items-center justify-center
+           rounded-lg px-4 py-2
+           text-sm md:text-base font-medium tracking-tight
+           transition
+           border border-transparent
+           shadow-none
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-sky-400/60;
+  }
+
+  /* Primary: SKY → BLUE gradient. No green. */
+  .btn-primary {
+    @apply btn text-white
+           bg-gradient-to-r from-sky-500 to-indigo-500
+           hover:from-sky-600 hover:to-indigo-600
+           active:from-sky-700 active:to-indigo-700;
+  }
+
+  /* Outline: airy, sky emphasis */
+  .btn-outline {
+    @apply btn
+           text-sky-700
+           border-sky-300
+           bg-transparent
+           hover:bg-sky-50
+           active:bg-sky-100;
+  }
+
+  /* Ghost: subtle white surface with sky text */
+  .btn-ghost {
+    @apply btn
+           text-sky-700
+           bg-white
+           border border-gray-200
+           hover:bg-gray-50
+           active:bg-gray-100;
+  }
+
+  /* Link-style button */
+  .btn-link {
+    @apply inline-flex items-center gap-1
+           text-sky-600 hover:underline underline-offset-4
+           px-0 py-0 rounded-none;
+  }
+
+  /* Optional small/large variants */
+  .btn-sm { @apply px-3 py-1.5 text-sm rounded-md; }
+  .btn-lg { @apply px-5 py-3 text-base rounded-xl; }
+  
+  .badge {
+    @apply inline-flex items-center rounded-full bg-gray-100 text-gray-700 px-3 py-1 text-sm;
+  }
+  
+  .section-title {
+    @apply text-2xl md:text-3xl font-extrabold tracking-tight;
+  }
+  
+  .section-sub {
+    @apply text-gray-600 mt-2;
+  }
+  
+  /* PROOF elements that must be visible after build */
+  
+  .proof-section-tint {
+    @apply bg-[#f9fafb];
+  }
+}
+
+body { @apply bg-[#fafaf9]; }
+
+/* Ensure navbar is transparent by default */
+header {
+  background: transparent !important;
+}
+
+/* Override any DaisyUI navbar defaults */
+.navbar {
+  background: transparent !important;
+}
+
+/* Override any fixed header backgrounds */
+header[data-debug-nav] {
+  background: transparent !important;
+}
+
+/* Ensure no parent containers add white backgrounds */
+#root > header,
+body > header,
+main > header {
+  background: transparent !important;
+}
+
+/* K-Culture Enhanced Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(168, 85, 247, 0.8);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.6s ease-out forwards;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* Enhanced shadow effects */
+.shadow-3xl {
+  box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Gradient text effects */
+.gradient-text {
+  background: linear-gradient(45deg, #8b5cf6, #ec4899, #ef4444);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* 스크롤 애니메이션 */
+@keyframes fadeInOnScroll {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUpOnScroll {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUpOnScroll {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-on-scroll {
+  animation: fadeInOnScroll 0.8s ease-out forwards;
+}
+
+.animate-slide-up-on-scroll {
+  animation: slideUpOnScroll 0.6s ease-out forwards;
+}
+
+.animate-fade-in-up-on-scroll {
+  animation: fadeInUpOnScroll 0.8s ease-out forwards;
+}
+
+/* 화려한 카드 효과들 */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes glowPulse {
+  0% { box-shadow: 0 0 0px rgba(56, 189, 248, 0.0), 0 0 0px rgba(99, 102, 241, 0.0); }
+  50% { box-shadow: 0 10px 40px rgba(56, 189, 248, 0.25), 0 20px 60px rgba(99, 102, 241, 0.15); }
+  100% { box-shadow: 0 0 0px rgba(56, 189, 248, 0.0), 0 0 0px rgba(99, 102, 241, 0.0); }
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+  100% { transform: translateY(0); }
+}
+
+/* K-컬처 섹션 상단 배경 업그레이드 */
+@keyframes auroraWave {
+  0% { transform: translateX(-10%) skewY(-6deg); opacity: 0.6; }
+  50% { transform: translateX(10%) skewY(-2deg); opacity: 0.85; }
+  100% { transform: translateX(-10%) skewY(-6deg); opacity: 0.6; }
+}
+
+@keyframes orbit {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.aurora-layer {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(60% 40% at 20% 30%, rgba(56,189,248,0.20), transparent 60%),
+              radial-gradient(50% 35% at 80% 20%, rgba(99,102,241,0.18), transparent 60%),
+              radial-gradient(45% 30% at 50% 70%, rgba(16,185,129,0.15), transparent 60%);
+  filter: blur(28px);
+  animation: auroraWave 12s ease-in-out infinite;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(18px);
+  opacity: 0.35;
+  animation: floatUp 6s ease-in-out infinite;
+}
+
+.blob-1 { width: 220px; height: 220px; left: 8%; top: 4%; background: radial-gradient(circle at 30% 30%, #22d3ee, #3b82f6); }
+.blob-2 { width: 180px; height: 180px; right: 12%; top: 12%; background: radial-gradient(circle at 30% 30%, #34d399, #60a5fa); animation-delay: 1.2s; }
+.blob-3 { width: 140px; height: 140px; left: 30%; bottom: 10%; background: radial-gradient(circle at 30% 30%, #818cf8, #06b6d4); animation-delay: 0.6s; }
+
+.orbit-wrapper {
+  position: absolute;
+  top: 22%;
+  left: 75%;
+  width: 120px;
+  height: 120px;
+  transform-origin: center;
+  animation: orbit 18s linear infinite;
+}
+
+.orbit-dot {
+  position: absolute;
+  width: 10px; height: 10px; border-radius: 9999px;
+  background: #38bdf8; box-shadow: 0 0 12px rgba(56,189,248,0.7);
+}
+.orbit-dot:nth-child(1) { top: 0; left: 50%; transform: translateX(-50%); }
+.orbit-dot:nth-child(2) { right: 0; top: 50%; transform: translateY(-50%); background:#60a5fa; box-shadow: 0 0 12px rgba(96,165,250,0.7); }
+.orbit-dot:nth-child(3) { bottom: 0; left: 50%; transform: translateX(-50%); background:#818cf8; box-shadow: 0 0 12px rgba(129,140,248,0.7); }
+.orbit-dot:nth-child(4) { left: 0; top: 50%; transform: translateY(-50%); background:#06b6d4; box-shadow: 0 0 12px rgba(6,182,212,0.7); }
+
+.animated-gradient-border {
+  position: absolute;
+  inset: -2px;
+  border-radius: 1.25rem; /* ~ rounded-2xl */
+  background: linear-gradient(90deg, #22d3ee, #3b82f6, #6366f1, #22d3ee);
+  background-size: 300% 300%;
+  filter: blur(10px);
+  opacity: 0;
+  transition: opacity 300ms ease;
+  pointer-events: none;
+  z-index: 0;
+  animation: gradientShift 6s linear infinite;
+}
+
+.card-tilt {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.shine-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.0) 100%);
+  transform: translateX(-100%);
+  transition: transform 700ms ease;
+  pointer-events: none;
+}
+
+.group:hover .shine-overlay {
+  transform: translateX(100%);
+}
+
+/* 가로 스크롤 스타일 */
+.overflow-x-auto::-webkit-scrollbar {
+  height: 6px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background: #0ea5e9;
+  border-radius: 3px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background: #0284c7;
+}
+
+/* 스크롤바 숨김 유틸리티 */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* 테마 카드 전체 화면 확장 */
+.theme-card-expanded {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 9999 !important;
+  border-radius: 0 !important;
+}
+
+
+
+

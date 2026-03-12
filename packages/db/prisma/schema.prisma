@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String           @id @default(cuid())
+  email        String           @unique
+  displayName  String?
+  lang         String           @default("KR")
+  createdAt    DateTime         @default(now())
+  passwordHash String
+  itineraries  Itinerary[]
+  Schedule     Schedule[]
+  likes        UserLike[]
+  recentViews  UserRecentView[]
+}
+
+model Place {
+  id      String          @id
+  source  String
+  placeId String
+  name    String
+  address String?
+  lat     Float?
+  lng     Float?
+  tags    String[]
+  items   ItineraryItem[]
+}
+
+model UserLike {
+  id        String   @id @default(cuid())
+  userId    String
+  placeId   String
+  tags      String[]
+  createdAt DateTime @default(now())
+  address   String?
+  name      String?
+  rating    Float?
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, placeId])
+  @@index([userId, placeId])
+}
+
+model UserRecentView {
+  id       String   @id @default(cuid())
+  userId   String
+  placeId  String
+  tags     String[]
+  viewedAt DateTime @default(now())
+  address  String?
+  name     String?
+  rating   Float?
+  user     User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, placeId])
+  @@index([userId, placeId])
+}
+
+model Itinerary {
+  id        String          @id @default(cuid())
+  userId    String
+  title     String
+  startDate DateTime?
+  endDate   DateTime?
+  notes     String?
+  createdAt DateTime        @default(now())
+  user      User            @relation(fields: [userId], references: [id])
+  items     ItineraryItem[]
+}
+
+model ItineraryItem {
+  id          String    @id @default(cuid())
+  itineraryId String
+  placeId     String
+  day         Int?
+  startTime   String?
+  endTime     String?
+  memo        String?
+  itinerary   Itinerary @relation(fields: [itineraryId], references: [id])
+  place       Place     @relation(fields: [placeId], references: [id])
+}
+
+model PlaceCache {
+  placeId   String   @id
+  json      Json
+  fetchedAt DateTime @default(now())
+}
+
+model Schedule {
+  id        String   @id @default(cuid())
+  userId    String
+  date      DateTime @db.Date
+  startTime String
+  endTime   String
+  title     String
+  remarks   String?
+  order     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  User      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, date, order])
+  @@index([userId, date])
+}

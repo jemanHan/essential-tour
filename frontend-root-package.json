@@ -1,0 +1,36 @@
+{
+  "name": "visitkorea-clean-arch",
+  "private": true,
+  "version": "0.1.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "lint": "echo 'lint placeholder'",
+    "typecheck": "tsc -b --pretty false --verbose",
+    "test": "echo 'add workspace tests'",
+    "dev:fe": "npm --workspace apps/frontend run dev",
+    "dev:be": "npm --workspace apps/backend run dev",
+    "build:fe": "npm --workspace apps/frontend run build",
+    "build:be": "npm --workspace apps/backend run build",
+    "build": "npm run build:be && npm run build:fe",
+    "db:generate": "npm -w packages/db run generate",
+    "db:migrate": "npm -w packages/db run migrate:dev",
+    "infra:build": "npm -w apps/infra run build",
+    "infra:diff": "npm -w apps/infra run cdk:diff",
+    "infra:outputs": "npm -w apps/infra run cdk:outputs",
+    "env:sync:aws": "node apps/infra/scripts/sync-aws-outputs.ts"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.1",
+    "fastify": "^5.5.0",
+    "undici": "^7.15.0"
+  }
+}

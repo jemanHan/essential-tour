@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: vk-postgres-prod
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: vk
+      POSTGRES_PASSWORD: vkpass
+      POSTGRES_DB: visitkorea
+    ports:
+      - "5432:5432"
+    volumes:
+      - vk-postgres-data-prod:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  frontend:
+    build:
+      context: ./apps/frontend
+      dockerfile: Dockerfile
+      target: production
+    container_name: vk-frontend-prod
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - db
+
+  nginx:
+    image: nginx:alpine
+    container_name: vk-nginx-prod
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    depends_on:
+      - frontend
+    command: nginx -g "daemon off;"
+
+volumes:
+  vk-postgres-data-prod:

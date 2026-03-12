@@ -1,0 +1,29 @@
+{
+  "name": "@adapters/impl",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rimraf dist || rmdir /s /q dist"
+  },
+  "dependencies": {
+    "@application/core": "*",
+    "@shared/types": "*",
+    "undici": "^6.19.8",
+    "@aws-sdk/client-dynamodb": "^3.621.0",
+    "@aws-sdk/lib-dynamodb": "^3.621.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4",
+    "rimraf": "^5.0.7"
+  }
+}
+
+
+
+
+
+

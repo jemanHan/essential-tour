@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: vk-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: vk
+      POSTGRES_PASSWORD: vkpass
+      POSTGRES_DB: visitkorea
+    ports:
+      - "5432:5432"
+    volumes:
+      - vk-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  backend:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile
+    container_name: vk-backend
+    restart: unless-stopped
+    env_file:
+      - ./apps/backend/.env.docker
+    environment:
+      # db 서비스 네임을 호스트로 사용
+      DATABASE_URL: postgresql://${POSTGRES_USER:-vk}:${POSTGRES_PASSWORD:-vkpass}@db:5432/${POSTGRES_DB:-visitkorea}?schema=public
+      NODE_ENV: development
+      PORT: ${PORT:-3002}
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "3002:3002"
+    # 개발 모드: 코드 핫리로드용 바인드 마운트(선택)
+    volumes:
+      - ./apps/backend:/app
+      - /app/node_modules
+    command: npm run dev
+    working_dir: /app
+
+  frontend:
+    build:
+      context: ./apps/frontend
+      dockerfile: Dockerfile
+    container_name: vk-frontend
+    restart: unless-stopped
+    env_file:
+      - ./apps/frontend/.env.docker
+    environment:
+      VITE_API_BASE_URL: http://backend:3002
+      CHOKIDAR_USEPOLLING: "true"  # Windows 파일변경 감지 이슈 대응
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./apps/frontend:/app
+      - /app/node_modules
+    command: npm run dev -- --host 0.0.0.0
+    working_dir: /app
+
+  nginx:
+    image: nginx:alpine
+    container_name: vk-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./apps/frontend/dist:/usr/share/nginx/html:ro
+    depends_on:
+      - frontend
+      - backend
+    command: nginx -g "daemon off;"
+
+volumes:
+  vk-postgres-data:

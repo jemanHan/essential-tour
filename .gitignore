@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Logs & runtime
+logs/
+*.log
+npm-debug.log*
+
+# Coverage
+coverage/
+
+# Uploads (user content)
+uploads/
+
+# Archives
+*.zip
+*.tar
+*.tar.gz
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Prisma
+packages/db/prisma/.env
+
+# Environment files (no leading dot)
+env.development
+env.production
+
+# Keys / certificates
+*.pem
+*.key
+*.crt
+*.p12
