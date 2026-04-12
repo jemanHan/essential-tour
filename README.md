@@ -1,18 +1,27 @@
-# Essential Tour - Travel Guide Web Service
+# Essential Tour
 
-React / Node.js(Fastify) 기반의 여행 정보 웹 서비스입니다.  
-여행지 탐색, 일정 Planner, 좋아요 기능을 제공하며, PostgreSQL / Prisma 기반 데이터 모델과 AWS 기반 Web/WAS 분리 아키텍처를 적용해 Full Stack 프로젝트로 구현했습니다.
+React / Fastify 기반으로 구축한 여행 정보 탐색 웹 서비스입니다.  
+여행지 검색, 일정 Planner, 좋아요, 다국어 지원을 하나의 흐름으로 연결하고, PostgreSQL / Prisma 기반 데이터 모델과 AWS Web/WAS 분리 배포 구조까지 포함해 구현했습니다.
+
+특히 외부 API를 많이 쓰는 여행 서비스 특성상  
+검색 흐름, 데이터 가공, 일정 관리뿐 아니라 과다호출과 비용 문제를 실제로 해결하는 데 집중했습니다.
 
 ---
 
-## Overview
+## Project overview
 
-이 프로젝트는 여행 정보 탐색과 일정 관리를 하나의 서비스에서 제공하는 것을 목표로 개발한 웹 서비스입니다.
+- 여행지 탐색과 일정 관리를 하나의 서비스에서 제공하는 웹 서비스
+- Google Places API + Tour API 기반 장소 탐색 및 상세 조회
+- 일정 Planner, 좋아요, 다국어 지원 기능 구현
+- PostgreSQL / Prisma 기반 데이터 모델과 REST API 설계
+- AWS 기반 Web / WAS 분리 배포 환경 구성
 
-주요 구현 범위:
+---
 
-- 여행지 정보 탐색
-- 여행 일정 Planner
+## Core features
+
+- 여행지 탐색 및 상세 정보 조회
+- 일정 Planner 기능
 - 여행지 좋아요 기능
 - 다국어 지원
 - REST API 기반 데이터 처리
@@ -20,62 +29,69 @@ React / Node.js(Fastify) 기반의 여행 정보 웹 서비스입니다.
 
 ---
 
-## Tech Stack
+## Technical decisions
 
-### Frontend
+- **React + Fastify**  
+  클라이언트와 API 서버를 분리해 화면과 도메인 로직의 책임을 명확히 나누기 위해 선택
 
-- React
-- TypeScript
-- Vite
-- React Router
-- Context API / Custom Hooks
-- Tailwind CSS
-- DaisyUI
-- Axios
+- **PostgreSQL + Prisma**  
+  사용자, 여행지, 일정, 좋아요 데이터를 관계형 구조로 관리하기 위해 사용
 
-### Backend
+- **domain / application / adapters 패키지 구조**  
+  외부 API 연동과 서비스 로직이 한곳에 섞이지 않도록 책임을 분리하기 위해 적용
 
-- Node.js
-- Fastify
-- REST API
+- **Web / WAS 분리 배포**  
+  정적 자산과 API 서버를 나눠 운영 안정성과 접근성을 확보하기 위해 적용
 
-### Database / ORM
-
-- PostgreSQL
-- Prisma ORM
-
-### Infra
-
-- AWS
-- Nginx
-- Web / WAS 분리 아키텍처
-- Load Balancer
-- CloudFront
+- **Load Balancer + CloudFront**  
+  서비스 접근성과 응답 안정성을 고려한 배포 구조를 만들기 위해 사용
 
 ---
 
-## Main Features
+## Problem solving and improvements
 
-- 여행 정보 조회 기능
-- 여행 일정 Planner 기능
-- 여행지 좋아요 기능
-- 사용자 기반 데이터 관리
-- 다국어 지원
-- REST API 기반 클라이언트-서버 통신
-- Web / WAS 분리 배포 환경 구성
+### 1. React `useEffect` 루프로 인한 외부 API 과다호출
+- 문제: Google Places API 사용량이 급증하며 며칠 새 약 40만 원이 청구됨
+- 원인: `useEffect` 의존성 오류로 같은 요청이 반복 실행됨
+- 해결:
+  - `useCallback` 기반으로 의존성 구조 재정리
+  - 최소 500ms 요청 간격 제한
+  - 요청 큐로 중복 요청 방지
+  - 30초 캐시와 최대 캐시 크기 제한 적용
+- 결과:
+  - API 호출량 약 90% 감소
+  - 일일 비용 10만 원대 이상에서 1만 원 이하 수준으로 감소
+
+### 2. 스케줄 생성 데이터의 유효성 보장이 필요한 문제
+- 문제: 일정 생성 시 날짜 / 시간 / 필수 필드 오류 가능성 존재
+- 해결:
+  - 날짜 형식 검증
+  - 시간 형식 검증
+  - 시작 / 종료 시간 범위 검증
+  - 제목 필수값 검증
+  - 표준 에러 응답 형식 정의
+- 결과: Planner API 입력 안정성과 예외 처리 일관성 확보
+
+### 3. 팀 단위 동시 개발 환경이 필요한 문제
+- 문제: 여러 개발자가 동시에 작업할 때 포트 충돌, DB 충돌, 테스트 기준 차이가 발생
+- 해결:
+  - 개발자별 FE / BE / DB 포트 분리
+  - 독립 DB 사용
+  - Prisma generate / migrate 흐름 분리
+- 결과: 3명 동시 개발환경에서도 충돌 없이 기능 검증 가능
 
 ---
 
-## Project Structure
+## Architecture
 
-```
+```text
 .
 ├── src/              # Frontend (React)
 ├── backend-src/      # Backend API (Fastify)
 ├── packages/
 │   ├── db/           # Prisma schema & migrations
 │   ├── domain/       # Domain entities
-│   ├── adapters/     # External adapters (e.g. Google Places)
+│   ├── adapters/     # External adapters (Google Places, etc.)
 │   ├── application/  # Use cases
 │   └── shared-types/
 ├── public/
@@ -83,52 +99,54 @@ React / Node.js(Fastify) 기반의 여행 정보 웹 서비스입니다.
 └── README.md
 ```
 
-실제 폴더 구조는 프로젝트 정리 버전에 따라 일부 다를 수 있습니다.
+- Frontend: React 기반 사용자 화면
+- Backend: Fastify 기반 API 서버
+- Database: PostgreSQL + Prisma
+- Package structure: `domain / application / adapters` 중심으로 책임 분리
+- Infra: AWS 기반 Web / WAS 분리 배포
 
 ---
 
-## Architecture
+## Tech stack
 
-이 프로젝트는 프론트엔드와 백엔드를 분리한 구조로 설계했습니다.
-
-- **Frontend**: React 기반 사용자 화면
-- **Backend**: Fastify 기반 API 서버
-- **Database**: PostgreSQL + Prisma
-- **Infra**: AWS 기반 Web / WAS 분리 배포
-
-배포 환경에서는 정적 리소스와 API 서버를 분리해 서비스 접근성과 운영 안정성을 고려했습니다.
+- Frontend: React, TypeScript, Vite, React Router, Tailwind CSS, DaisyUI, Axios
+- Backend: Node.js, Fastify, REST API
+- Database: PostgreSQL, Prisma ORM
+- Infra: AWS, Nginx, Load Balancer, CloudFront
 
 ---
 
-## Getting Started
+## My role
 
-### 1. Install dependencies
+- React 기반 주요 페이지 구현
+- Fastify 기반 도메인 API 구현
+- PostgreSQL / Prisma 기반 사용자 / 좋아요 / 여행 일정 데이터 모델 설계 및 REST API 구현
+- Planner 및 좋아요 기능 구현
+- API 스펙 및 도메인 모델 정의
+- 공통 컴포넌트 / 라우팅 / 상태관리 패턴 정리
+- AWS 기반 Web / WAS 분리 인프라 설계 및 배포
+- 팀장으로서 일정 조율, 업무 분배, 코드 리뷰 흐름 정리
+
+---
+
+## Getting started
+
+### Install dependencies
 
 ```bash
 npm install
 ```
 
-(모노레포 구성에 따라 루트, `backend-src`, `src` 등에서 각각 설치가 필요할 수 있습니다.)
-
-### 2. Set environment variables
-
-프로젝트 실행 전 환경 변수 파일을 설정해야 합니다.
-
-예시:
+### Environment variables
 
 ```env
 TOUR_API_KEY=your_tour_api_key
 DATABASE_URL=your_database_url
 ```
 
-- Tour API 키 및 DB 연결 정보는 `packages/db/prisma/.env.example` 파일을 참고해 설정할 수 있습니다.
+자세한 설정은 `packages/db/prisma/.env.example`, `LOCAL_EXECUTION_GUIDE.md`를 참고하세요.
 
-### 3. Run project
-
-실행 명령은 프로젝트 구성에 따라 다릅니다.  
-필요한 경우 frontend / backend / database 패키지를 각각 실행해야 합니다.
-
-예시:
+### Run project
 
 ```bash
 npm run dev
@@ -141,25 +159,18 @@ npm run dev:frontend
 npm run dev:backend
 ```
 
-실제 실행 명령은 각 디렉터리의 `package.json` 기준으로 조정해 주세요.  
-자세한 절차는 `LOCAL_EXECUTION_GUIDE.md`를 참고할 수 있습니다.
-
 ---
 
-## My Role
+## Related docs
 
-- React 기반 핵심 페이지 구현
-- Node.js(Fastify) 기반 도메인 API 구현
-- PostgreSQL / Prisma 기반 사용자·좋아요·여행 일정 데이터 모델 설계 및 REST API 구현
-- 여행 일정 Planner 및 좋아요 기능 구현
-- API 스펙 및 도메인 모델 정의
-- 공통 컴포넌트 / 라우팅 / 상태관리 패턴 설계
-- AWS 기반 Web / WAS 분리 인프라 설계 및 배포
-- 팀장으로서 일정 조율, 업무 배분, 코드리뷰 프로세스 정리
+- `API_과다호출_해결_가이드.md`
+- `BACKEND_ADDITIONAL_CHANGES.md`
+- `README-3개발자.md`
+- `LOCAL_EXECUTION_GUIDE.md`
+- `DEPLOYMENT_GUIDE.md`
 
 ---
 
 ## Notes
 
-This repository is a portfolio-ready public version of the project.  
-Sensitive values such as API keys, database credentials, and deployment-specific settings have been removed or replaced with example values.
+이 저장소는 포트폴리오 공개용으로 정리한 버전이며, 실행 관련 값은 환경변수 기준으로 구성합니다.
