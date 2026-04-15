@@ -170,7 +170,3 @@ npm run dev:backend
 - `DEPLOYMENT_GUIDE.md`
 
 ---
-
-## Notes
-
-이 저장소는 포트폴리오 공개용으로 정리한 버전이며, 실행 관련 값은 환경변수 기준으로 구성합니다.
